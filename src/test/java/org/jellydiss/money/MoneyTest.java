@@ -76,6 +76,8 @@ public class MoneyTest {
     }
 
 
+
+
     @Test
     public void identityRate() {
         assertEquals(1, new Bank().rate("USD", "USD"));
@@ -90,5 +92,37 @@ public class MoneyTest {
         Money result = bank.reduce(fiveBucks.plus(tenFrancs), "USD");
         assertEquals(Money.dollar(10), result);
     }
+
+
+    @Test
+    public void sumPlusMoney() {
+        Expression fiveBucks = Money.dollar(5);
+        Expression tenFrancs = Money.franc(10);
+
+        Bank bank = new Bank();
+        bank.addRate("CHF", "USD", 2);
+        Expression sum = new Sum(fiveBucks, tenFrancs).plus(fiveBucks);
+        Money result = bank.reduce(sum, "USD");
+        assertEquals(Money.dollar(15), result);
+    }
+
+
+    @Test
+    public void sumTimes() {
+        Expression fiveBucks = Money.dollar(5);
+        Expression tenFrancs = Money.franc(10);
+        Bank bank = new Bank();
+        bank.addRate("CHF", "USD", 2);
+        Expression sum = new Sum(fiveBucks, tenFrancs).times(2);
+        Money result = bank.reduce(sum, "USD");
+        assertEquals(Money.dollar(20), result);
+    }
+
+    @Test
+    public void plusSameCurrencyReturnsMoney() {
+        Expression sum = Money.dollar(1).plus(Money.dollar(1));
+        assertTrue(sum instanceof Money);
+    }
+
 
 }
